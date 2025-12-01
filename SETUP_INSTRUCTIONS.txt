@@ -1,0 +1,64 @@
+===============================================================================
+                    MindCare - Quick Setup Instructions
+===============================================================================
+
+STEP 1: Install Dependencies
+-----------------------------
+pip install -r requirements.txt
+
+STEP 2: Run Migrations
+----------------------
+python manage.py makemigrations
+python manage.py migrate
+
+STEP 3: Create Admin User
+--------------------------
+python manage.py createsuperuser
+(Follow prompts to create username, email, and password)
+
+STEP 4: Populate Questions
+---------------------------
+python manage.py populate_questions
+
+STEP 5: Run Server
+------------------
+python manage.py runserver
+
+Then open your browser and go to: http://127.0.0.1:8000/
+
+===============================================================================
+                              IMPORTANT NOTES
+===============================================================================
+
+- Admin Panel: http://127.0.0.1:8000/admin/
+- Home Page: http://127.0.0.1:8000/
+- Dashboard: http://127.0.0.1:8000/dashboard/ (requires login)
+- Quiz: http://127.0.0.1:8000/quiz/ (requires login)
+
+- All user data is stored in db.sqlite3 (SQLite database)
+- Static files are in the /static folder
+- Templates are in assessments/templates/assessments/
+
+===============================================================================
+                        TROUBLESHOOTING
+===============================================================================
+
+Issue: "No module named django"
+Solution: Make sure you've activated your virtual environment and run:
+          pip install -r requirements.txt
+
+Issue: "Questions not showing in quiz"
+Solution: Run: python manage.py populate_questions
+
+Issue: "Static files not loading"
+Solution: Make sure STATIC_URL is set correctly in settings.py
+          For development, Django should serve static files automatically
+
+Issue: "Database errors"
+Solution: Delete db.sqlite3 and run migrations again:
+          python manage.py migrate
+
+===============================================================================
+
+
+
