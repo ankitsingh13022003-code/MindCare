@@ -1,0 +1,216 @@
+{% extends 'assessments/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - MindCare{% endblock %}
+
+{% block content %}
+<div class="dashboard-container py-5 mt-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="fw-bold mb-3">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+                <p class="text-muted">Here's your mental health journey overview</p>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="stat-card bg-primary text-white p-4 rounded shadow">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="bi bi-clipboard-data fs-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ total_assessments }}</h3>
+                            <p class="mb-0">Total Assessments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-success text-white p-4 rounded shadow">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="bi bi-graph-up fs-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ avg_score }}</h3>
+                            <p class="mb-0">Average Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-info text-white p-4 rounded shadow">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="bi bi-activity fs-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">
+                                {% if latest_assessment %}
+                                {{ latest_assessment.overall_category|title }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </h3>
+                            <p class="mb-0">Latest Status</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chart Section -->
+        {% if total_assessments > 0 %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">Assessment Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="assessmentChart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3">Quick Actions</h5>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="{% url 'quiz' %}" class="btn btn-primary">
+                                <i class="bi bi-clipboard-check"></i> Take New Assessment
+                            </a>
+                            <a href="{% url 'guidance' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-book"></i> View Resources
+                            </a>
+                            <a href="{% url 'contact' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-envelope"></i> Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Assessment History -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">Assessment History</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if assessments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Total Score</th>
+                                        <th>Category</th>
+                                        <th>Breakdown</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for assessment in assessments %}
+                                    <tr>
+                                        <td>{{ assessment.created_at|date:"M d, Y" }}</td>
+                                        <td><span class="badge bg-secondary">{{ assessment.total_score }}</span></td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if assessment.overall_category == 'low' %}bg-success
+                                                {% elif assessment.overall_category == 'mild' %}bg-info
+                                                {% elif assessment.overall_category == 'moderate' %}bg-warning
+                                                {% else %}bg-danger{% endif %}">
+                                                {{ assessment.overall_category|title }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                Anxiety: {{ assessment.anxiety_score }} | 
+                                                Depression: {{ assessment.depression_score }} | 
+                                                Stress: {{ assessment.stress_score }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'result' assessment.id %}" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+                            <p class="text-muted mt-3">No assessments yet. Take your first assessment to get started!</p>
+                            <a href="{% url 'quiz' %}" class="btn btn-primary">Take Assessment</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if total_assessments > 0 %}
+<script>
+    // Chart data
+    const assessmentData = [
+        {% for assessment in assessments reversed %}
+        {
+            date: '{{ assessment.created_at|date:"M d" }}',
+            score: {{ assessment.total_score }},
+            category: '{{ assessment.overall_category }}'
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Create chart
+    const ctx = document.getElementById('assessmentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: assessmentData.map(a => a.date),
+            datasets: [{
+                label: 'Assessment Score',
+                data: assessmentData.map(a => a.score),
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
+
+
+

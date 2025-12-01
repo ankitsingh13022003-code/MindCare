@@ -1,0 +1,145 @@
+{% extends 'assessments/base.html' %}
+
+{% block title %}Admin Dashboard - MindCare{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold mb-3">
+                <i class="bi bi-shield-check text-warning"></i> Admin Dashboard
+            </h1>
+            <p class="text-muted">Manage questions and view contact messages</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Questions</h6>
+                            <h2 class="mb-0">{{ total_questions }}</h2>
+                        </div>
+                        <div class="text-primary fs-1">
+                            <i class="bi bi-question-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Contact Messages</h6>
+                            <h2 class="mb-0">{{ total_messages }}</h2>
+                        </div>
+                        <div class="text-success fs-1">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Assessments</h6>
+                            <h2 class="mb-0">{{ total_assessments }}</h2>
+                        </div>
+                        <div class="text-info fs-1">
+                            <i class="bi bi-clipboard-data"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'admin_add_question' %}" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-plus-circle"></i> Add New Question
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'admin_questions' %}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="bi bi-list-ul"></i> View All Questions
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'admin_contact_messages' %}" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-envelope-open"></i> View Contact Messages
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary btn-lg w-100" target="_blank">
+                                <i class="bi bi-gear"></i> Django Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-envelope"></i> Recent Contact Messages</h5>
+                    <a href="{% url 'admin_contact_messages' %}" class="text-white">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_messages %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for message in recent_messages %}
+                                <tr>
+                                    <td>{{ message.name }}</td>
+                                    <td>{{ message.email }}</td>
+                                    <td>{{ message.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'admin_view_message' message.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No messages yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

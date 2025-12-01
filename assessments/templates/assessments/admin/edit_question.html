@@ -1,0 +1,102 @@
+{% extends 'assessments/base.html' %}
+
+{% block title %}Edit Question - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil"></i> Edit Question
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="questionForm">
+                        {% csrf_token %}
+                        
+                        <!-- Question Form -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Question Details</h5>
+                            <div class="mb-3">
+                                <label for="{{ form.text.id_for_label }}" class="form-label fw-bold">Question Text</label>
+                                {{ form.text }}
+                                {% if form.text.errors %}
+                                <div class="text-danger small">{{ form.text.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">Category</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                <div class="text-danger small">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Options Formset -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Answer Options</h5>
+                            <p class="text-muted small">
+                                <i class="bi bi-info-circle"></i> Weight: 0 = Best, 4 = Worst. At least 2 options required.
+                            </p>
+                            
+                            {{ formset.management_form }}
+                            <div id="options-container">
+                                {% for option_form in formset %}
+                                <div class="option-form mb-3 p-3 border rounded">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <label class="form-label">Option Text</label>
+                                            {{ option_form.text }}
+                                            {% if option_form.text.errors %}
+                                            <div class="text-danger small">{{ option_form.text.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Weight (0-4)</label>
+                                            {{ option_form.weight }}
+                                            {% if option_form.weight.errors %}
+                                            <div class="text-danger small">{{ option_form.weight.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            {% if option_form.DELETE %}
+                                            <div class="form-check">
+                                                {{ option_form.DELETE }}
+                                                <label class="form-check-label" for="{{ option_form.DELETE.id_for_label }}">
+                                                    Delete
+                                                </label>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {{ option_form.id }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            {% if formset.non_form_errors %}
+                            <div class="alert alert-danger">
+                                {{ formset.non_form_errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'admin_questions' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Update Question
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

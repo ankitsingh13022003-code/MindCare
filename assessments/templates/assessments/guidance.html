@@ -1,0 +1,159 @@
+{% extends 'assessments/base.html' %}
+
+{% block title %}Support & Resources - MindCare{% endblock %}
+
+{% block content %}
+<div class="guidance-container py-5 mt-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="fw-bold mb-3">Support & Resources</h1>
+                <p class="lead text-muted">You're not alone. Help is available.</p>
+            </div>
+        </div>
+        
+        <!-- Crisis Helplines -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0"><i class="bi bi-telephone-fill"></i> Crisis Helplines</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            {% for helpline in helplines %}
+                            <div class="col-md-6">
+                                <div class="helpline-card p-4 border rounded h-100">
+                                    <h5 class="fw-bold mb-2">{{ helpline.name }}</h5>
+                                    <p class="text-primary fs-4 fw-bold mb-2">{{ helpline.number }}</p>
+                                    <p class="text-muted mb-0">{{ helpline.description }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Online Resources -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0"><i class="bi bi-link-45deg"></i> Online Resources</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            {% for resource in resources %}
+                            <div class="col-md-6">
+                                <div class="resource-card p-4 border rounded h-100">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-bold mb-0">{{ resource.title }}</h5>
+                                        <span class="badge bg-secondary">{{ resource.type }}</span>
+                                    </div>
+                                    <p class="text-muted mb-3">{{ resource.description }}</p>
+                                    <a href="{{ resource.link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        Visit <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mental Health Tips -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="bi bi-heart"></i> Mental Health Tips</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for tip in tips %}
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                    <p class="mb-0">{{ tip }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chatbot Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-chat-dots"></i> Need Immediate Support?</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="chatbot-section" class="p-4 bg-light rounded">
+                            <div id="chatbot-messages" class="mb-3" style="min-height: 200px; max-height: 400px; overflow-y: auto;">
+                                <div class="alert alert-info mb-2">
+                                    <strong>MindCare Bot:</strong> Hello! I'm here to help. How are you feeling today?
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="sendChatbotMessage('I feel anxious')">
+                                    I feel anxious
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="sendChatbotMessage('I feel sad')">
+                                    I feel sad
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="sendChatbotMessage('I need help')">
+                                    I need help
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="sendChatbotMessage('Resources')">
+                                    Show resources
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sendChatbotMessage(userMessage) {
+        const messagesDiv = document.getElementById('chatbot-messages');
+        
+        // Add user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'alert alert-secondary mb-2 text-end';
+        userMsg.innerHTML = `<strong>You:</strong> ${userMessage}`;
+        messagesDiv.appendChild(userMsg);
+        
+        // Bot responses
+        const responses = {
+            'I feel anxious': 'It\'s completely normal to feel anxious. Try taking deep breaths (inhale for 4 counts, hold for 4, exhale for 4). Consider speaking with a mental health professional if anxiety persists.',
+            'I feel sad': 'I\'m sorry you\'re feeling this way. Remember, sadness is a valid emotion. Reach out to friends, family, or a counselor. You don\'t have to go through this alone.',
+            'I need help': 'Help is available. Please consider calling 988 (Suicide & Crisis Lifeline) or reach out to a mental health professional. You can also use our contact form to get in touch with a counselor.',
+            'Resources': 'Here are immediate resources: 988 Crisis Line, Crisis Text Line (text HOME to 741741), and SAMHSA Helpline (1-800-662-4357). You can also find more resources above on this page.',
+            'default': 'I understand you\'re going through a difficult time. Please consider reaching out to a mental health professional or using the crisis helplines listed above. Your well-being matters.'
+        };
+        
+        // Bot response
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'alert alert-info mb-2';
+            botMsg.innerHTML = `<strong>MindCare Bot:</strong> ${responses[userMessage] || responses['default']}`;
+            messagesDiv.appendChild(botMsg);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 500);
+    }
+</script>
+{% endblock %}
+
+
+

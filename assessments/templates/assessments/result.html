@@ -1,0 +1,108 @@
+{% extends 'assessments/base.html' %}
+
+{% block title %}Assessment Result - MindCare{% endblock %}
+
+{% block content %}
+<div class="result-container py-5 mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Result Header -->
+                <div class="card shadow-lg mb-4">
+                    <div class="card-body text-center p-5">
+                        <div class="result-icon mb-3">
+                            {% if assessment.overall_category == 'low' %}
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                            {% elif assessment.overall_category == 'mild' %}
+                            <i class="bi bi-info-circle-fill text-info" style="font-size: 5rem;"></i>
+                            {% elif assessment.overall_category == 'moderate' %}
+                            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 5rem;"></i>
+                            {% else %}
+                            <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 5rem;"></i>
+                            {% endif %}
+                        </div>
+                        <h2 class="fw-bold mb-3">
+                            Assessment Result: 
+                            <span class="{% if assessment.overall_category == 'low' %}text-success{% elif assessment.overall_category == 'mild' %}text-info{% elif assessment.overall_category == 'moderate' %}text-warning{% else %}text-danger{% endif %}">
+                                {{ assessment.overall_category|title }}
+                            </span>
+                        </h2>
+                        <p class="lead text-muted">
+                            Assessment taken on {{ assessment.created_at|date:"F d, Y" }}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Score Breakdown -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Total Score</h6>
+                                <h3 class="fw-bold">{{ assessment.total_score }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Anxiety</h6>
+                                <h3 class="fw-bold text-warning">{{ assessment.anxiety_score }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Depression</h6>
+                                <h3 class="fw-bold text-info">{{ assessment.depression_score }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Stress</h6>
+                                <h3 class="fw-bold text-danger">{{ assessment.stress_score }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-lightbulb"></i> Personalized Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for recommendation in recommendations %}
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                {{ recommendation }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="text-center">
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{% url 'quiz' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-clockwise"></i> Retake Assessment
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-speedometer2"></i> View Dashboard
+                        </a>
+                        <a href="{% url 'guidance' %}" class="btn btn-outline-info btn-lg">
+                            <i class="bi bi-book"></i> Get Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
