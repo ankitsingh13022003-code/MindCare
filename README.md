@@ -39,7 +39,9 @@ Icons: Bootstrap Icons
 📦 Installation & Setup
 Prerequisites
 
+
 Python 3.8+
 
 pip (Python package manager)
+
 
